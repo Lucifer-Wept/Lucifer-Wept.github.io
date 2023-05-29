@@ -14,9 +14,12 @@
   <button onclick="reset()">重新計算</button>
   <h2>轉換結果：</h2>
   <table id="result"></table>
-
+<!--(1)JS code to calculate -->
+<!--line 55: (5)check if input is valid -->
+<!--line 74: (4) reset button function above-->
   <script>
-    function calculate() {
+    function calculate() { 
+
       var xhr = new XMLHttpRequest();
 
       xhr.onreadystatechange = function() {
