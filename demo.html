@@ -16,35 +16,48 @@
 
   <script>
     function calculate() {
-      	var xhr = new XMLHttpRequest();
+      var xhr = new XMLHttpRequest();
 
-		xhr.onreadystatechange = function() {
-		    if (xhr.readyState === 4) {
-			    if (xhr.status === 200) {
-			      var xmlString = xhr.responseText;
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var xmlString = xhr.responseText;
 
-			      // Parse the XML content
-			      var parser = new DOMParser();
-			      var xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-			      var rates = xmlDoc.getElementsByTagName('rate')[0];
-			      var usdRate = parseFloat(rates.getElementsByTagName('USD')[0].textContent);
-			      var eurRate = parseFloat(rates.getElementsByTagName('EUR')[0].textContent);
-			      var jpyRate = parseFloat(rates.getElementsByTagName('JPY')[0].textContent);
-			      var krwRate = parseFloat(rates.getElementsByTagName('KRW')[0].textContent);
-			      var audRate = parseFloat(rates.getElementsByTagName('AUD')[0].textContent);
+            // Parse the XML content
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(xmlString, 'text/xml');
 
+            // Error handling for XML parsing
+            if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
+              console.log('Error parsing XML:', xmlDoc.getElementsByTagName('parsererror')[0].textContent);
+              return;
+            }
 
-	            var TWDInput = document.getElementById("TWD");
-	            var TWDAmount = parseFloat(TWDInput.value);
+            var rates = xmlDoc.getElementsByTagName('rate')[0];
 
-	            if (isNaN(TWDAmount) || TWDAmount <= 0) {
-	              alert("請輸入有效的台幣金額！");
-	              reset();
-	            } else {
-	              var table = "<tr><th>USD</th><th>EUR</th><th>JPY</th><th>KRW</th><th>AUD</th></tr>";
-	              table += "<tr><td>" + (TWDAmount * usdRate).toFixed(2) + "</td><td>" + (TWDAmount * eurRate).toFixed(2) + "</td><td>" + (TWDAmount * jpyRate).toFixed(2) + "</td><td>" + (TWDAmount * krwRate).toFixed(2) + "</td><td>" + (TWDAmount * audRate).toFixed(2) + "</td></tr>";
-	              document.getElementById("result").innerHTML = table;
-	            }
+            // Error handling for exchange rate retrieval
+            if (!rates) {
+              console.log('Error retrieving exchange rates.');
+              return;
+            }
+
+            var usdRate = parseFloat(rates.getElementsByTagName('USD')[0].textContent);
+            var eurRate = parseFloat(rates.getElementsByTagName('EUR')[0].textContent);
+            var jpyRate = parseFloat(rates.getElementsByTagName('JPY')[0].textContent);
+            var krwRate = parseFloat(rates.getElementsByTagName('KRW')[0].textContent);
+            var audRate = parseFloat(rates.getElementsByTagName('AUD')[0].textContent);
+
+            var TWDInput = document.getElementById("TWD");
+            var TWDAmount = parseFloat(TWDInput.value);
+
+            if (isNaN(TWDAmount) || TWDAmount <= 0) {
+              alert("請輸入有效的台幣金額！");
+              reset();
+            } else {
+              var table = "<tr><th>USD</th><th>EUR</th><th>JPY</th><th>KRW</th><th>AUD</th></tr>";
+              table += "<tr><td>" + (TWDAmount * usdRate).toFixed(2) + "</td><td>" + (TWDAmount * eurRate).toFixed(2) + "</td><td>" + (TWDAmount * jpyRate).toFixed(2) + "</td><td>" + (TWDAmount * krwRate).toFixed(2) + "</td><td>" + (TWDAmount * audRate).toFixed(2) + "</td></tr>";
+              document.getElementById("result").innerHTML = table;
+            }
           } else {
             console.log('Error fetching XML. Status:', xhr.status);
           }
