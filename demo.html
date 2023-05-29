@@ -15,41 +15,49 @@
   <table id="result"></table>
 
   <script>
-    var xhr = new XMLHttpRequest();
+    function calculate() {
+      var xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        var xmlDoc = xhr.responseXML;
-        var rates = xmlDoc.getElementsByTagName('rate')[0];
-        var usdRate = parseFloat(rates.getElementsByTagName('USD')[0].textContent);
-        var eurRate = parseFloat(rates.getElementsByTagName('EUR')[0].textContent);
-        var jpyRate = parseFloat(rates.getElementsByTagName('JPY')[0].textContent);
-        var krwRate = parseFloat(rates.getElementsByTagName('KRW')[0].textContent);
-        var audRate = parseFloat(rates.getElementsByTagName('AUD')[0].textContent);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var xmlString = xhr.responseText;
 
-        function calculate() {
-          var TWDInput = document.getElementById("TWD");
-          var TWDAmount = parseFloat(TWDInput.value);
+            // Parse the XML content
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+            var rates = xmlDoc.getElementsByTagName('rate')[0];
+            var usdRate = parseFloat(rates.getElementsByTagName('USD')[0].textContent);
+            var eurRate = parseFloat(rates.getElementsByTagName('EUR')[0].textContent);
+            var jpyRate = parseFloat(rates.getElementsByTagName('JPY')[0].textContent);
+            var krwRate = parseFloat(rates.getElementsByTagName('KRW')[0].textContent);
+            var audRate = parseFloat(rates.getElementsByTagName('AUD')[0].textContent);
 
-          if (isNaN(TWDAmount) || TWDAmount <= 0) {
-            alert("請輸入有效的台幣金額！");
-            reset();
+            var TWDInput = document.getElementById("TWD");
+            var TWDAmount = parseFloat(TWDInput.value);
+
+            if (isNaN(TWDAmount) || TWDAmount <= 0) {
+              alert("請輸入有效的台幣金額！");
+              reset();
+            } else {
+              var table = "<tr><th>USD</th><th>EUR</th><th>JPY</th><th>KRW</th><th>AUD</th></tr>";
+              table += "<tr><td>" + (TWDAmount * usdRate).toFixed(2) + "</td><td>" + (TWDAmount * eurRate).toFixed(2) + "</td><td>" + (TWDAmount * jpyRate).toFixed(2) + "</td><td>" + (TWDAmount * krwRate).toFixed(2) + "</td><td>" + (TWDAmount * audRate).toFixed(2) + "</td></tr>";
+              document.getElementById("result").innerHTML = table;
+            }
           } else {
-            var table = "<tr><th>USD</th><th>EUR</th><th>JPY</th><th>KRW</th><th>AUD</th></tr>";
-            table += "<tr><td>" + (TWDAmount * usdRate) + "</td><td>" + (TWDAmount * eurRate) + "</td><td>" + (TWDAmount * jpyRate) + "</td><td>" + (TWDAmount * krwRate) + "</td><td>" + (TWDAmount * audRate) + "</td></tr>";
-            document.getElementById("result").innerHTML = table;
+            console.log('Error fetching XML. Status:', xhr.status);
           }
         }
+      };
 
-        function reset() {
-          document.getElementById("TWD").value = "";
-          document.getElementById("result").innerHTML = "";
-        }
-      }
-    };
+      xhr.open('GET', 'rate.xml', true);
+      xhr.send();
+    }
 
-    xhr.open('GET', 'rate.xml', true);
-    xhr.send();
+    function reset() {
+      document.getElementById("TWD").value = "";
+      document.getElementById("result").innerHTML = "";
+    }
   </script>
 </body>
 </html>
