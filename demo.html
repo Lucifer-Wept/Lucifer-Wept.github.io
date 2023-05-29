@@ -4,6 +4,7 @@
   <title>Currency converter</title>
   <meta charset="utf-8">
   <link href="rate.css" rel="stylesheet">
+
 </head>
 <body>
   <h1>台幣匯率轉換計算機</h1>
@@ -55,7 +56,7 @@
               reset();
             } else {
               var table = "<tr><th>USD</th><th>EUR</th><th>JPY</th><th>KRW</th><th>AUD</th></tr>";
-              table += "<tr><td>" + (TWDAmount * usdRate).toFixed(2) + "</td><td>" + (TWDAmount * eurRate).toFixed(2) + "</td><td>" + (TWDAmount * jpyRate).toFixed(2) + "</td><td>" + (TWDAmount * krwRate).toFixed(2) + "</td><td>" + (TWDAmount * audRate).toFixed(2) + "</td></tr>";
+              table += "<tr><td>" + (TWDAmount / usdRate).toFixed(2) + "</td><td>" + (TWDAmount / eurRate).toFixed(2) + "</td><td>" + (TWDAmount / jpyRate).toFixed(2) + "</td><td>" + (TWDAmount / krwRate).toFixed(2) + "</td><td>" + (TWDAmount / audRate).toFixed(2) + "</td></tr>";
               document.getElementById("result").innerHTML = table;
             }
           } else {
